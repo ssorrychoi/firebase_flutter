@@ -11,5 +11,10 @@ Firebase for Flutter app.
 
 ## 2. Introduction
 
+Flutter와 Firebase는 record time안에 모바일 앱을 빌드할 수 있도록 도와줄 것입니다.
+
+- [Flutter](https://flutter.dev/)는 iOS와 android를 위한 모바일 앱 빌드를 위한 Google의 SDK입니다.
+- [Firebase](https://firebase.google.com/)는 authentication, 스토리지, db와 호스팅을 포함한 모바일 앱을 위한 백엔드 서비스를 제공합니다.
+
 
 
