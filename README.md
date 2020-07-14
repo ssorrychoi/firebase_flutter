@@ -59,3 +59,9 @@ Flutter와 Firebase는 record time안에 모바일 앱을 빌드할 수 있도�
 4. IDE에서 `flutter packages get` 명령어를 실행시켜주세요. 또는, 프로젝트의 맨 위에 command line에서 `flutter packages get` 을 실행해서 Flutter Packages를 추가해주세요.
 
 에러가 난다면, `dependencies` 블럭에 들여쓰기를 확인해주세요.(tab이 아닌) 2칸 스페이스를 써야합니다.
+
+
+
+## 5. Add the user interface
+
+1. 
