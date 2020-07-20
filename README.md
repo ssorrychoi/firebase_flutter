@@ -211,3 +211,14 @@ class Record {
 
 ## 7. Platform-specific Firebase configuration
 
+Firebase project를 생성후, Firebase project를 사용하기 위한 하나(혹은 그 이상의) 앱을 구성할 수 있습니다. 이것을 하기위한 것은 이렇습니다 :
+
+- Firebase에 앱의 platform-specific ID를 등록하십시오.
+- 당신의 앱을 위한 구성 파일을 생성한후, 프로젝트 folder에 추가하십시오.
+
+만약 iOS와 Android 두 플랫폼을 위한 Flutter 앱을 개발중이라면, 같은 Firebase project에서 두 플랫폼 따로 등록해야 합니다. 하나의 플랫폼만 개발중이라면, 필요하지 않은 section은 넘기셔도 됩니다.
+
+> **Tip:** 시간을 단축시키기 위해서, 지금은 하나의 플랫폼만 세팅해보길 추천합니다. 다른 하나는 언제든지 추가하실 수 있습니다.
+
+ 
+
