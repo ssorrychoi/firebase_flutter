@@ -64,4 +64,150 @@ Flutter와 Firebase는 record time안에 모바일 앱을 빌드할 수 있도�
 
 ## 5. Add the user interface
 
-1. 
+1. [Get Started: Test Drive](https://flutter.dev/docs/get-started/test-drive) 페이지를 참고해서, device나 emulator 에서 기본앱을 실행하십시오.
+
+Flutter는 앱을 빌드하기 위해 시간이 몇분정도 소요됩니다. 좋은 소식은 이번 codelab에서 컴파일을 기다리는 마지막 시간인 것입니다. 나머지 변경 사항은 *hot-reloaded* 됩니다. 앱 빌딩이 다 되었다면, 다음과 같은 화면을 보게 될 것입니다.
+
+![image](https://user-images.githubusercontent.com/43080040/87846458-fa097080-c90a-11ea-96ff-34954909f502.png)
+
+2. IDE나 editor를 사용해서, `lib/main.dart` 파일을 열어주세요. 이 파일은 현재 기본 Flutter app을 위한 전체 코드가 포함되어 있습니다.
+3. `main.dart` 파일에 전체 코드를 삭제하시고, 아래 파일로 대체하십시오.
+
+```dart
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyApp());
+
+final dummySnapshot = [
+  {"name": "Filip", "votes": 15},
+  {"name": "Abraham", "votes": 14},
+  {"name": "Richard", "votes": 11},
+  {"name": "Ike", "votes": 10},
+  {"name": "Justin", "votes": 1},
+];
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Baby Names',
+      home: MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() {
+    return _MyHomePageState();
+  }
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Baby Name Votes')),
+      body: _buildBody(context),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    // TODO: get actual snapshot from Cloud Firestore
+    return _buildList(context, dummySnapshot);
+  }
+
+  Widget _buildList(BuildContext context, List<Map> snapshot) {
+    return ListView(
+      padding: const EdgeInsets.only(top: 20.0),
+      children: snapshot.map((data) => _buildListItem(context, data)).toList(),
+    );
+  }
+
+  Widget _buildListItem(BuildContext context, Map data) {
+    final record = Record.fromMap(data);
+
+    return Padding(
+      key: ValueKey(record.name),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        child: ListTile(
+          title: Text(record.name),
+          trailing: Text(record.votes.toString()),
+          onTap: () => print(record),
+        ),
+      ),
+    );
+  }
+}
+
+class Record {
+  final String name;
+  final int votes;
+  final DocumentReference reference;
+
+  Record.fromMap(Map<String, dynamic> map, {this.reference})
+      : assert(map['name'] != null),
+        assert(map['votes'] != null),
+        name = map['name'],
+        votes = map['votes'];
+
+  Record.fromSnapshot(DocumentSnapshot snapshot)
+      : this.fromMap(snapshot.data, reference: snapshot.reference);
+
+  @override
+  String toString() => "Record<$name:$votes>";
+}
+```
+
+4. 파일(`main.dart`)을 저장하고, 앱을 hot-reload 하십시오.
+   - IDE를 사용하신다면, 자동으로 저장이 되고 hot-reload됩니다.
+   - editor를 사용하신다면, `flutter run` 을 실행한 같은 디렉토리 위치에서 command에서 `r` 을 입력하십시오.
+
+당신은 다음과 같은 화면을 보게 될 것입니다.
+
+
+
+앱은 단지 mock입니다. 이름을 클릭하면 콘솔에 이름이 찍힐 것입니다.
+
+다음 단계는 Colud Firestore에 이 앱을 연결 시키는 것입니다. 그렇게 하기 전에, `main.dart` 코드가 어떻게 구성 되어있는지 읽어보십시오.
+
+>  **Optional:** 방금 copy-paste한 `main.dart` 코드를 배우기 위해선 아래를 읽어보십시오.
+>
+> 이 프로그램의 전반부는 매우 간단합니다:
+>
+> - Colud Firestore와 커뮤니케이션을 위한 플러그인`cloud_firestore.dart` 를 import합니다. 
+> - Dummy data를 추가합니다. (곧 Cloud Firestore instance로 대체 될 것입니다.)
+> - 앱의 title을 **Baby Names**로 세팅합니다.
+>
+> 코드의 재밌는 부분은 `_MyHomePageState`입니다. 이 문단에서 `build` 메소드가 앱에서 display되는 부분을 만들기 위한  [widget hierarchy](https://flutter.dev/docs/development/ui/widgets-intro)를 정의합니다.
+>
+> - 앱에서 `AppBar`가 있습니다.(title은 `Baby Name Votes`).
+> - 앱의 body에는 각 더미 데이터 포인트를 개별 list item으로 렌더링하는 `ListView` 가 포함 되어 있습니다.
+>
+> 가장 긴 메소드는 `_buildListItem`으로, 리스트에서 각 아이템이 어떻게 빌드가 되는지를 이야기 합니다.(baby names와 투표수로 구성된 둥근 사각형으로 display됩니다.)
+>
+> 마지막으로, `Record`가 있는데, 이름에 대한 단일 레코드를 보유하는 편의를 위한 클래스입니다. 이 클래스는 이와같은 간단한 앱에선 꼭 필요하진 않지만, 코드를 더 깔끔하게 만들어줍니다.
+
+
+
+## 6. Create a Firebase project
+
+1. Firebase 계정이 있다면, [로그인](https://firebase.google.com/) 하십시오.
+
+계정이 없다면, [Firebase account](https://firebase.google.com/pricing/)를 생성할 필요가 있습니다. codelab을 위한 free plan으로 하십시오.
+
+2. [Firebase console](https://console.firebase.google.com/)에서 Add project를 클릭하십시오.
+3. 아래 screencap에서 보이듯이, Firebase project를 위한 이름(예를 들면, "baby names app db")을 입력하고, "**Continue**"를 클릭하세요.
+4. 다음으로, Google Analytics를 구성하세요. 이번 codelab에선 Analytics를 사용하지 않습니다. 버튼을 끄고, "**Create project**"를 클릭하세요.
+5. 몇분이 지나면, Firebase project가 준비 될 것입니다. **Continue**를 클릭하세요.
+
+
+
+## 7. Platform-specific Firebase configuration
+
