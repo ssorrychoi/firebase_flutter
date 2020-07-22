@@ -220,5 +220,11 @@ Firebase project를 생성후, Firebase project를 사용하기 위한 하나(�
 
 > **Tip:** 시간을 단축시키기 위해서, 지금은 하나의 플랫폼만 세팅해보길 추천합니다. 다른 하나는 언제든지 추가하실 수 있습니다.
 
- 
+Flutter 앱의 최상위 디렉토리에보면 `ios`와 `android`라는 하위 디렉토리가 있습니다. 이 디렉토리에는 `iOS` 와 `Android` 각각의 구성파일이 있습니다.
+
+### 📱Configure iOS
+
+1. Firebase console 페이지의 왼쪽 nav에서 **Project Overview** 를 선택한 후, "Get started by adding Firebase to your app" 아래에 있는 iOS버튼을 클릭합니다.
+
+
 
