@@ -316,5 +316,46 @@ Flutter app이 이제 Firebase에 연결되었습니다.
 
 Flutter는 Firebase API와 plugin을 포함한 특정 플랫폼 서비스의 광대한 범위를 위한 접근을 제공합니다. 플러그인에는 iOS 및 Android의 서비스 및 API에 액세스하기위한 플랫폼 별 코드가 포함되어 있습니다.
 
+Firebase는 각 Firebase제품(예를들면, databses, auth, analytics, storage)마다 하나씩 다른 라이브러리를 통해 접근합니다. Flutter는 **FlutterFire** 라고 하는 각 Firebase 제품에 접근할 수 있는 자체 플러그인 세트를 제공합니다. FilutterFire 플러그인의 최신 리스트는 [Github 페이지](https://github.com/flutter/plugins/blob/master/FlutterFire.md)를 확인해주세요.
 
+
+
+## 8. Create your Cloud Firestore databse
+
+Firebase-Flutter 셋업이 끝나면 앱 빌딩을 시작할 준비가 된 것입니다!
+
+몇가지 값을 초기화하고 Cloud Firestore를 세팅함으로써 시작하게 됩니다.
+
+1. Firebase console에 들어가서 셋업하면서 만들었던 Firebase Project를 선택합니다.
+2. 왼쪽 nav의 `Develop` 섹션에서 **Database**를 선택합니다.
+3. Cloud Firestore 에서 `Create database(데이터베이스 만들기)` 를 클릭합니다.
+4. **Security rules for Cloud Firestore** dialog가 나오면, **Start in test mode(테스트모드로 시작)** 을 클릭한다.
+
+> ‼️ **Important :** Test모드는 개발하는 동안 편의를 위해 누구든지 데이터베이스에 쓰고 읽을 수 있습니다. 하지만, 보안적 위험성이 있습니다. production에 앱을 출시하기 전, [security rules](https://firebase.google.com/docs/reference/rules/rules)를 추가하십시오.
+
+우리의 DB에는 "baby" 라고 이름 지을 하나의 collection이 있을 것입니다. 이 collection에는 이름과 투표수가 저장될 것입니다.
+
+5. **Add Collection** 을 클릭하고, `baby` 라고 collection의 이름을 넣고 **Next** 를 클릭합니다.
+
+이제 collection에 documents를 추가할 수 있습니다. 각 document는 **Document ID** 를 가지고, 우리는 **name** 과 **votes** 필드가 필요합니다. 
+
+6. 이름을 입력합니다. 예를들면 `꿍디꿍디`
+
+> ✏️ **Note :** 각 Document ID에 실제 아기 이름을 사용하면 문서가 아기 이름으로 알파벳순으로 표시됩니다. 기본적으로 Document ID는 timestamps가 자동으로 생성될 것이고, document는 작성된 순서대로 표시될 것입니다.
+
+7. 기존 **Field** 의 경우, `name`의 값을 입력하고, Type을 `string` 으로 선택하고, 값은 `꿍디꿍디` 라고 입락한다.
+8. `votes` 의 숫자를 포함하기 위해 두번째 field 추가를 위한 **Add Field아이콘**을 클릭합니다. Type은 `number` 를 선택하고 값은 `0` 으로 초기화합니다.
+9. **Save** 를 클릭합니다.
+
+![image](https://user-images.githubusercontent.com/43080040/88398937-0dcc3f80-ce01-11ea-8129-973f5874cafe.png)
+
+10. **Add Document** 를 클릭해서 아기 이름을 추가합니다.
+
+collection에 몇가지 documents를 추가하면, database는 다음과 같이 보일 것입니다.
+
+![image](https://user-images.githubusercontent.com/43080040/88400653-9ba92a00-ce03-11ea-83d0-39b75a838533.png)
+
+
+
+## 9. Connect your Flutter app to Cloud Firestore
 
