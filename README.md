@@ -359,3 +359,82 @@ collection에 몇가지 documents를 추가하면, database는 다음과 같이 
 
 ## 9. Connect your Flutter app to Cloud Firestore
 
+우리 앱은 이제 Colud Firestore에 🔌연결되었습니다!
+
+우리의 collection (`baby`)를 `dummySnapshot` 객체 대신 가져와서 사용할 차례입니다.
+
+Dart에서는, `Firestore.instance` 를 호출함으로써 Cloud Firestore에 레퍼런스를 가져옵니다. 특히 아기 이름의 collection을 `Firestore.instance.collection('baby').snapshots()` 호출해서 반환받습니다.
+
+`StreamBuilder` 위젯을 사용하여 해당 데이터 stream을 Flutter UI에 연결해봅시다.
+
+1. IDE나 editor에서 `lib/main.dart` 파일을 열고, `_buildBody` method를 찾습니다.
+2. 전체 method를 다음 코드로 대체합니다.
+
+```dart
+Widget _buildBody(BuildContext context) {
+ return StreamBuilder<QuerySnapshot>(
+   stream: Firestore.instance.collection('baby').snapshots(),
+   builder: (context, snapshot) {
+     if (!snapshot.hasData) return LinearProgressIndicator();
+
+     return _buildList(context, snapshot.data.documents);
+   },
+ );
+}
+```
+
+> ✏️ **Note :** `StreamBuilder` 위젯은 데이터가 변화될때마다 리스트를 refresh하고 database를 업데이트 하기 위해 주시하고 있습니다. 데이터가 없을땐, progress indicator를 보여줍니다.
+
+3. 방금 copy-pasted한 코드는 type 에러가 있습니다. `DocumentSnapshot` 목록을 다른 것을 기대하는 method로 전달하려고 합니다. `_buildList` 를 찾고 다음과 같이 signature를 변경해주세요:
+
+```dart
+Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
+  ... 
+```
+
+`Map` 의  list 대신 이제 `DocumentSnapshot` list를 사용하겠습니다.
+
+4. 거의 다 됐습니다. `_buildListItem` method는 아직 `Map` 으로 가져오고 있습니다. method의 시작부분을 찾고 아래와 같이 바꿔주세요 : 
+
+```dart
+Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
+ final record = Record.fromSnapshot(data);
+```
+
+`Map`대신 이제 우리는 `DocumentSnapshot`을 사용했고, `Record`를 빌드하기 위해 `Record.fromSnapshot()` 이름을 가진 구조체를 사용합니다.
+
+5. (Optional) `lib/main.dart` 의 맨 위에 있는 `dummpSnapshot` 필드를 삭제해주세요. 더이상 필요하지 않습니다.
+6. 파일을 저장한 후, 앱을 hot-reloaded 시켜주세요.
+   - IDE를 사용중이라면, 저장하면 자동으로 hot-reload될 것입니다.
+   - editor를 사용한다면, `flutter run` 을 실행시키는 동일한 위치에서 command line에 `r`을 입력합니다.
+
+몇초후에, 다음과 같은 화면을 볼 수 있을겁니다.
+
+![image](https://user-images.githubusercontent.com/43080040/88454731-71f80d80-ceac-11ea-8bcc-01c0bd1a4879.png)
+
+
+
+## 10. Add interactivity
+
+이제 user들에게 실제 투표를 허락해주면 될 것입니다.
+
+1. `lib/main.dart` 에서 `onTap: () => print(record)` 가 있는 line을 찾습니다. 다음과 같이 바꿔줍니다.
+
+```dart
+onTap: () => record.reference.updateData({'votes': record.votes + 1})
+```
+
+console에 record가 프린팅 되는것 대신에, 투표 count가 1씩 증가하게 baby 이름의 database reference를 업데이트 해줍니다.
+
+2. 파일을 저장하고, hot-reload해줍니다.
+
+투표가 이제 기능적으로 사용자 interface에 업데이트 됩니다.
+
+
+
+어떻게 된 걸까요? 이름이 포함된 tile을 클릭할때, reference의 데이터가 업데이트 되면서 Cloud Firestore에 이야기 합니다. 이번에, 업데이트된 snapshot와 함께 모든 listener들이 Cloud Firestore에 공지되기 때문입니다. 위에서 구현된 `StreamBuilder`를 통해 듣고있는 앱이 새로운 데이터로 업데이트 되는 것입니다.
+
+
+
+## 11. Update data automically
+
